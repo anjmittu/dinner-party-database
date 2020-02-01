@@ -18,7 +18,7 @@ class Utils:
 
     @staticmethod
     def get_last_question(phone):
-        return Utils.__get_person(phone, {"last_question": 1})["last_question"]
+        return Utils.get_person(phone, {"last_question": 1})["last_question"]
 
     @staticmethod
     def get_person(phone, fields = {}):
