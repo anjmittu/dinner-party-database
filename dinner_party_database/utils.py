@@ -38,7 +38,6 @@ class Utils:
         res = col.find_one(
             {"_id": party["event"] if party["event"] != None else make_event(party)}
         )
-        if
 
     def __make_event(party):
         events = db["events"]
