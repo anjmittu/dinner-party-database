@@ -95,3 +95,7 @@ class Utils:
     @staticmethod
     def __get_current_day():
         return datetime.today().weekday()
+
+    @staticmethod
+    def is_there_a_cook(from_number):
+        return "who_cooking" in Utils.get_event(from_number)
