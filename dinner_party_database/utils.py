@@ -99,3 +99,18 @@ class Utils:
     @staticmethod
     def is_there_a_cook(from_number):
         return "who_cooking" in Utils.get_event(from_number)
+
+    @staticmethod
+    def add_to_event(number):
+        event = Utils.get_event(number)
+        if "who_coming" in event:
+            event["who_coming"].append(Utils.get_person(number, {"_id":1})["_id"])
+            event.update_one(
+                {"_id": event["_id"]},
+                {"$set": {"who_coming": event["who_coming"]}}
+            )
+        else:
+            event.update_one(
+                {"_id": event["_id"]},
+                {"$set": {"who_coming": [Utils.get_person(number, {"_id":1})["_id"]]}}
+            )
