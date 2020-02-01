@@ -32,7 +32,7 @@ class Utils:
     def get_party(phone):
         col = Utils.db["parties"]
         return col.find_one(
-            {"_id": Utils.__get_person(phone, {"party": 1})}
+            {"_id": Utils.get_person(phone, {"party": 1})}
         )
 
     @staticmethod
