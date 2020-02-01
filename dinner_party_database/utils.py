@@ -3,10 +3,11 @@ import os
 
 
 class Utils:
+    client = pymongo.MongoClient(os.getenv("MONGODB_URL"))
+    db = client["diner-party"]
+
     @staticmethod
     def update_question(phone, n):
-        client = pymongo.MongoClient(os.getenv("MONGODB_URL"))
-        db = client["diner-party"]
         col = db["people"]
         col.update_one(
             {"number": phone},
@@ -15,11 +16,38 @@ class Utils:
 
     @staticmethod
     def get_last_question(phone):
-        client = pymongo.MongoClient(os.getenv("MONGODB_URL"))
-        db = client["diner-party"]
+        return __get_person(phone, {"last_question": 1})["last_question"]
+
+
+    def __get_person(phone, fields = {}):
         col = db["people"]
-        result = col.find_one(
+        return col.find_one(
             {"number": phone},
-            {"last_question": 1}
+            fields
         )
-        return result["last_question"]
+
+    def get_party(phone):
+        col = db["parties"]
+        return col.find_one(
+            {"_id": __get_person(phone, {"party": 1})}
+        )
+
+    def get_event(phone):
+        col = db["events"]
+        party = get_party(phone)
+        res = col.find_one(
+            {"_id": party["event"] if party["event"] != None else make_event(party)}
+        )
+        if
+
+    def __make_event(party):
+        events = db["events"]
+        parties = db["parties"]
+
+        result = events.insert_one({})
+        parties.update_one(
+            {"_id": party["_id"]},
+            {"$set": {"event": result.inserted_id}}    
+        )
+
+        return result.inserted_id
