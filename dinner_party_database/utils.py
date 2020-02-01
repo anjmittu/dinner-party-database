@@ -45,7 +45,7 @@ class Utils:
         col = Utils.db["events"]
         party = Utils.get_party(phone)
         return col.find_one(
-            {"_id": party["event"] if party["event"] != None else Utils.make_event(party)}
+            {"_id": party["event"] if party["event"] != None else Utils.__make_event(party)}
         )
 
     @staticmethod
