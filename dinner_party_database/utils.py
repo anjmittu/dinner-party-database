@@ -29,6 +29,14 @@ class Utils:
         )
 
     @staticmethod
+    def get_person_by_id(id, fields={}):
+        col = Utils.db["people"]
+        return col.find_one(
+            {"_id": id},
+            fields
+        )
+
+    @staticmethod
     def get_party(phone):
         col = Utils.db["parties"]
         return col.find_one(
