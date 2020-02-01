@@ -39,6 +39,13 @@ class Utils:
             {"_id": party["event"] if party["event"] != None else make_event(party)}
         )
 
+    def update_event(id, changes):
+        col = db["events"]
+        col.update_one(
+            {"_id": id},
+            changes
+        )
+
     def __make_event(party):
         events = db["events"]
         parties = db["parties"]
