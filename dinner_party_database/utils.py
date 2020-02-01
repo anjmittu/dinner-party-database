@@ -19,7 +19,7 @@ class Utils:
         return __get_person(phone, {"last_question": 1})["last_question"]
 
 
-    def __get_person(phone, fields = {}):
+    def get_person(phone, fields = {}):
         col = db["people"]
         return col.find_one(
             {"number": phone},
