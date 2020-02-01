@@ -1,5 +1,7 @@
 import pymongo
 import os
+from typing import List
+from datetime import datetime
 
 
 class Utils:
@@ -34,6 +36,11 @@ class Utils:
         )
 
     @staticmethod
+    def get_all_party():
+        parties = db["parties"]
+        return parties.find({})
+
+    @staticmethod
     def get_event(phone):
         col = db["events"]
         party = get_party(phone)
@@ -61,3 +68,22 @@ class Utils:
         )
 
         return result.inserted_id
+
+    @staticmethod
+    def get_cooker(people_ids: List):
+        people_table = dp["people"]
+        latest_cooked = None
+        latest_person = None
+        for person in people_ids:
+            person_info = people_table.find_one({"_id": person})
+            if latest_cooked is None or latest_cooked > person_info["last_cooked"]:
+                # The person is current the last person to have cooked
+                # We still need to check if they are able to cook today
+                if Utils.__get_current_day() in person_info["cook_days"]:
+                    latest_person = person_info
+                    latest_cooked = person_info["last_cooked"]
+        return latest_person
+
+    @staticmethod
+    def __get_current_day():
+        return datetime.today().weekday()
