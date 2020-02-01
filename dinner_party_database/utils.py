@@ -10,7 +10,7 @@ class Utils:
 
     @staticmethod
     def update_question(phone, n):
-        col = db["people"]
+        col = Utils.db["people"]
         col.update_one(
             {"number": phone},
             {"$set": {"last_question": n}}
@@ -18,11 +18,11 @@ class Utils:
 
     @staticmethod
     def get_last_question(phone):
-        return __get_person(phone, {"last_question": 1})["last_question"]
+        return Utils.__get_person(phone, {"last_question": 1})["last_question"]
 
     @staticmethod
     def get_person(phone, fields = {}):
-        col = db["people"]
+        col = Utils.db["people"]
         return col.find_one(
             {"number": phone},
             fields
@@ -30,27 +30,27 @@ class Utils:
 
     @staticmethod
     def get_party(phone):
-        col = db["parties"]
+        col = Utils.db["parties"]
         return col.find_one(
-            {"_id": __get_person(phone, {"party": 1})}
+            {"_id": Utils.__get_person(phone, {"party": 1})}
         )
 
     @staticmethod
     def get_all_party():
-        parties = db["parties"]
+        parties = Utils.db["parties"]
         return parties.find({})
 
     @staticmethod
     def get_event(phone):
-        col = db["events"]
-        party = get_party(phone)
+        col = Utils.db["events"]
+        party = Utils.get_party(phone)
         res = col.find_one(
             {"_id": party["event"] if party["event"] != None else make_event(party)}
         )
 
     @staticmethod
     def update_event(id, changes):
-        col = db["events"]
+        col = Utils.db["events"]
         col.update_one(
             {"_id": id},
             changes
@@ -58,8 +58,8 @@ class Utils:
 
     @staticmethod
     def __make_event(party):
-        events = db["events"]
-        parties = db["parties"]
+        events = Utils.db["events"]
+        parties = Utils.db["parties"]
 
         result = events.insert_one({})
         parties.update_one(
@@ -71,7 +71,7 @@ class Utils:
 
     @staticmethod
     def get_cooker(people_ids: List):
-        people_table = dp["people"]
+        people_table = Utils.db["people"]
         latest_cooked = None
         latest_person = None
         for person in people_ids:
