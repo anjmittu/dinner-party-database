@@ -44,7 +44,7 @@ class Utils:
     def get_event(phone):
         col = Utils.db["events"]
         party = Utils.get_party(phone)
-        res = col.find_one(
+        return col.find_one(
             {"_id": party["event"] if party["event"] != None else Utils.make_event(party)}
         )
 
