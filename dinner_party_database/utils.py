@@ -101,7 +101,7 @@ class Utils:
         return "who_cooking" in Utils.get_event(from_number)
 
     @staticmethod
-    def add_to_event(number):
+    def add_person_to_event(number):
         col = Utils.db["events"]
         event = Utils.get_event(number)
         if "who_coming" in event:
@@ -115,3 +115,31 @@ class Utils:
                 {"_id": event["_id"]},
                 {"$set": {"who_coming": [Utils.get_person(number, {"_id":1})["_id"]]}}
             )
+
+    @staticmethod
+    def remove_person_to_event(number):
+        col = Utils.db["events"]
+        event = Utils.get_event(number)
+        if "cant_come" in event:
+            event["cant_come"].append(Utils.get_person(number, {"_id": 1})["_id"])
+            col.update_one(
+                {"_id": event["_id"]},
+                {"$set": {"cant_come": event["cant_come"]}}
+            )
+        else:
+            col.update_one(
+                {"_id": event["_id"]},
+                {"$set": {"cant_come": [Utils.get_person(number, {"_id": 1})["_id"]]}}
+            )
+
+    @staticmethod
+    def check_if_everyone_respond(number):
+        event = Utils.get_event(number)
+        party = Utils.get_party(number)
+        total_responses = len(event["who_coming"]) if "who_coming" in event else 0 + len(event["cant_come"]) if "cant_come" in event else 0
+        return total_responses == len(party["people"])
+
+    @staticmethod
+    def is_anyone_coming(number):
+        event = Utils.get_event(number)
+        return len(event["who_coming"]) > 0 if "who_coming" in event else False
