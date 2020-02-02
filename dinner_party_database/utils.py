@@ -153,18 +153,18 @@ class Utils:
         return publisher.publish(topic_path, data=data.encode("utf-8"))
 
     @staticmethod
+    def people_who_come(number):
+        event = Utils.get_event(number)
+        return event["who_coming"] if "who_coming" in event else []
+
+    @staticmethod
     def get_list_people_coming(number):
         ret = ""
-        event = Utils.get_event(number)
-        if "who_coming" in event:
-            people_ids = event["who_coming"]
-            people_table = Utils.db["people"]
-            for person in people_ids:
-                person_info = people_table.find_one({"_id": person})
-                if ret == "":
-                    ret = person_info["name"]
-                else:
-                    ret += ", {}".format(person_info["name"])
-            return ret
-        else:
-            return ret
+        people_table = Utils.db["people"]
+        for person in Utils.people_who_come(number):
+            person_info = people_table.find_one({"_id": person})
+            if ret == "":
+                ret = person_info["name"]
+            else:
+                ret += ", {}".format(person_info["name"])
+        return ret
