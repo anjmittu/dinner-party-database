@@ -2,7 +2,7 @@ import pymongo
 import os
 from typing import List
 from datetime import datetime
-
+from google.cloud import pubsub_v1
 
 class Utils:
     client = pymongo.MongoClient(os.getenv("MONGODB_URL"))
@@ -115,3 +115,11 @@ class Utils:
                 {"_id": event["_id"]},
                 {"$set": {"who_coming": [Utils.get_person(number, {"_id":1})["_id"]]}}
             )
+
+    @staticmethod
+    def trigger_function(data):
+        # Set up pub/sub system which will trigger other lambda
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(os.getenv("PROJECT_ID"), os.getenv("TOPIC_NAME"))
+
+        return publisher.publish(topic_path, data=data.encode("utf-8"))

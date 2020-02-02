@@ -8,6 +8,7 @@ setup(
     install_requires=[
        'pymongo',
         'dnspython',
-        'datetime'
+        'datetime',
+        'google-cloud-pubsub'
     ]
 )
