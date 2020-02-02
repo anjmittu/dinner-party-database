@@ -123,3 +123,15 @@ class Utils:
         topic_path = publisher.topic_path(os.getenv("PROJECT_ID"), os.getenv("TOPIC_NAME"))
 
         return publisher.publish(topic_path, data=data.encode("utf-8"))
+
+    @staticmethod
+    def remove_event(party):
+        if party["event"]:
+            Utils.db["events"].remove_one({
+                "_id": party["event"]
+            })
+
+            Utils.db["party"].update_one(
+                {"_id": party["_id"]},
+                {"$set": {"event": None}}
+            )
