@@ -168,3 +168,13 @@ class Utils:
             else:
                 ret += ", {}".format(person_info["name"])
         return ret
+
+    @staticmethod
+    def update_last_time_cooked(number):
+        people_table = Utils.db["people"]
+        people_table.update_one(
+            {"number": number},
+            {"$set": {"last_cooked": datetime.now()}}
+        )
+
+
