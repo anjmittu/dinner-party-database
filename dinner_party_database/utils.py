@@ -2,7 +2,7 @@ import pymongo
 import os
 from typing import List
 from datetime import datetime
-
+from google.cloud import pubsub_v1
 
 class Utils:
     client = pymongo.MongoClient(os.getenv("MONGODB_URL"))
@@ -143,3 +143,28 @@ class Utils:
     def is_anyone_coming(number):
         event = Utils.get_event(number)
         return len(event["who_coming"]) > 0 if "who_coming" in event else False
+
+    @staticmethod
+    def trigger_function(data):
+        # Set up pub/sub system which will trigger other lambda
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(os.getenv("PROJECT_ID"), os.getenv("TOPIC_NAME"))
+
+        return publisher.publish(topic_path, data=data.encode("utf-8"))
+
+    @staticmethod
+    def get_list_people_coming(number):
+        ret = ""
+        event = Utils.get_event(number)
+        if "who_coming" in event:
+            people_ids = event["who_coming"]
+            people_table = Utils.db["people"]
+            for person in people_ids:
+                person_info = people_table.find_one({"_id": person})
+                if ret == "":
+                    ret = person_info["name"]
+                else:
+                    ret += ", {}".format(person_info["name"])
+            return ret
+        else:
+            return ret
