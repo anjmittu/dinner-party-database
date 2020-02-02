@@ -177,4 +177,13 @@ class Utils:
             {"$set": {"last_cooked": datetime.now()}}
         )
 
+    @staticmethod
+    def get_cook(number):
+        event = Utils.get_event(number)
+        if "who_cooking" in event:
+            people_table = Utils.db["people"]
+            return people_table.find_one({"_id": event["who_cooking"]})
+        else:
+            return None
+
 
